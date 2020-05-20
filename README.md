@@ -7,27 +7,27 @@ sudo apt-get update && sudo apt-get upgrade -y
 ```
 ### Configure iSCSI Initiator
  ```sh
-root@www:~# nano /etc/iscsi/initiatorname.iscsi
+sudo nano /etc/iscsi/initiatorname.iscsi
 ```
 change to the same IQN you set on the iSCSI target server:  
 InitiatorName=iqn.2020-05.kr.re.kist.imrc:55  
 
 서버의 iqn확인:
 ```sh
-root@www:~# nano /etc/iscsi/iscsid.conf
+sudo nano /etc/iscsi/iscsid.conf
 ```
-- line 48: uncomment: node.leading_login = Yes
-- line 56: uncomment: node.session.auth.authmethod = CHAP
-- line 60,61: To set a CHAP username and password for initiator:
+- line 48: uncomment: node.leading_login = Yes  
+- line 56: uncomment: node.session.auth.authmethod = CHAP  
+- line 60,61: To set a CHAP username and password for initiator:  
 node.session.auth.username = iqn.2020-05.kr.re.kist.imrc:55  
 node.session.auth.password = 1111!@  
 
-username = 스토리지 initiator 계정
-password = 임의 설정 (이 후 스토리지에서 host initiator 구성 시 CHAP 인증 password와 동일 하게 설정)
+username = 스토리지 initiator 계정  
+password = 임의 설정 (이 후 스토리지에서 host initiator 구성 시 CHAP 인증 password와 동일 하게 설정)  
 
 ### discover target
 ```sh
-root@www:~# iscsiadm -m discovery -t sendtargets -p 161.*.*.*
+iscsiadm -m discovery -t sendtargets -p 161.*.*.*
 ```
 - 161.*.*.*:3260,6 iqn.1988-11.com.dell:01.array.bc305bf0890  
 - 161.*.*.*:3260,5 iqn.1988-11.com.dell:01.array.bc305bf0890  
@@ -63,7 +63,7 @@ END RECORD
 
 ### login to the target
 ```sh
-root@www:~# iscsiadm -m node --login
+iscsiadm -m node --login
 ```
 Logging in to [iface: default, target: iqn.1988-11.com.dell:01.array.bc305bf0890, portal: 161.*.*.*,3260] (multiple)  
 Logging in to [iface: default, target: iqn.1988-11.com.dell:01.array.bc305bf0890, portal: 161.*.*.*,3260] (multiple)  
@@ -71,18 +71,18 @@ Login to [iface: default, target: iqn.1988-11.com.dell:01.array.bc305bf0890, por
 Login to [iface: default, target: iqn.1988-11.com.dell:01.array.bc305bf0890, portal: 161.*.*.*,3260] successful.  
 
 상단에 설명 한 것처럼 스토리지에서 host initiator 구성 시 CHAP 인증 정보와 서버의 CHAP 정보가 일치해야 함.  
-여기까지 진행 하면 스토리지에서 서버 iqn이 자동 등록되며, 스토리지에서 서버 생성 및 볼륨 할당을 진행 함  
+여기까지 진행 하면 스토리지에서 서버 iqn이 자동 등록되며, 스토리지에서 서버 생성 및 볼륨 할당을 진행함  
 
 ### confirm the established session
 ```sh
-root@www:~# iscsiadm -m session -o show
+iscsiadm -m session -o show
 ```
  tcp: [1] 161.*.*.*:3260,1 iqn.2020-05.kr.re.kist.imrc:55 (non-flash)  
-스토리지에서 연결된 정보 확인 – 일반적으로 2개임. (듀얼컨트롤러)  
+스토리지에서 연결된 정보 확인 – 일반적으로 2개임 (듀얼컨트롤러)  
  
 ### confirm the partitions
 ```sh
-root@www:~# cat /proc/partitions
+sudo cat /proc/partitions
 ```
 major minor  #blocks  name
 
