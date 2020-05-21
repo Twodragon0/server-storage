@@ -124,7 +124,7 @@ https://www.server-world.info/en/note?os=Ubuntu_18.04&p=iscsi&f=3
 
 ### Error solution
 
-1. Press button E for GRUB menu
+1. Press button E for GRUB menu after reboot
 2. Select Advanced options for Ubuntu in GRUB menu
 3. Select recovery mode 
 4. Select and Enter Root mode
