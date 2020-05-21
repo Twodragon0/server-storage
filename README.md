@@ -121,3 +121,17 @@ After setting iSCSI devide, configure on Initiator to use it like follows.
 
 링크 참고:  
 https://www.server-world.info/en/note?os=Ubuntu_18.04&p=iscsi&f=3  
+
+### Error solution
+
+1. Press button E for GRUB menu
+2. Select Advanced options for Ubuntu in GRUB menu
+3. Select recovery mode 
+4. Select and Enter Root mode
+5. Disk write Authenrization allow 
+6. Modify or making #, and then reboot
+```sh
+mount -o remount,rw /
+sudo nano /etc/fstab
+sudo reboot
+```
