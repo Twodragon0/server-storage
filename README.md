@@ -135,3 +135,12 @@ mount -o remount,rw /
 sudo nano /etc/fstab
 sudo reboot
 ```
+### GRUB recovery
+We need to ubuntu18.04 CD/USB. and select 'Try to ubuntu without install'. it has to do network setting.  
+Install boot-repair:
+```sh
+sudo add-apt-repository ppa:yannubuntu/boot-repair
+sudo apt-get update -y
+sudo apt-get install boot-repair -y
+```
+click Recommended Repair.
