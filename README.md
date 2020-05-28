@@ -144,3 +144,33 @@ sudo apt-get update -y
 sudo apt-get install boot-repair -y
 ```
 click Recommended Repair.
+
+## Multipath && Auto mount
+
+
+```sh
+sudo apt-get install multipath-tools multipath-tools-boot -y
+sudo nano /etc/multipath.conf
+defaults {
+        user_friendly_names yes
+}
+```
+https://ubuntu.com/server/docs/device-mapper-multipathing-introduction
+
+```sh
+systemctl stop multipath-tools.service
+multipath -F
+systemctl start multipath-tools.service
+mkdir /kist && cd /kist
+fdisk -l
+mount /dev/mapper/mpatha-part1 /kist
+df -Th # disk check
+blkid  # UUID check
+```
+Copy /dev/mapper/mpatha-part1 UUID for auto mount:
+```sh
+sudo nano /etc/fstab
+UUID=dde9*       /kist   ext4    defaults,auto,_netdev   0       0
+```
+
+
