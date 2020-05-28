@@ -2,8 +2,8 @@
 
 ### iSCSI install and update:
 ```sh
-sudo apt -y install open-iscsi
 sudo apt-get update && sudo apt-get upgrade -y
+sudo apt -y install open-iscsi
 ```
 ### Configure iSCSI Initiator
  ```sh
@@ -97,27 +97,55 @@ major minor  #blocks  name
    8        0   10485760 sdb
 
 ```sh
-fdisk –l
+fdisk -l
 ```
 Brand	Model	Version  
 - 새로운 파티션 안보임.  
 - 로그 아웃 후 재 로그인시 추가된 스토리지 볼륨이 정상적으로 확인됨  
 
 ```sh
-root@www:~# iscsiadm -m node --logout
-root@www:~# df 
-```
-
-추가 된 스토리지 볼륨은 로그 아웃 후 로그인 해야 정상 적으로 확인 됨.  
-
-```sh
-mkfs.ext4 /dev/mapper/3600c0ff0003cc84c8529755c01000000
-mount /dev/mapper/3600c0ff0003cc84c8529755c01000000-part1 /tmp
+iscsiadm -m node --logout
 df -Th
 ```
-/dev/mapper/3600c0ff0003cc84c8529755c01000000-part1 ext4      9.1T   80M  8.6T   1% /tmp  
 
-After setting iSCSI devide, configure on Initiator to use it like follows.  
+## Multipath && Auto mount
+
+```sh
+sudo apt-get install multipath-tools multipath-tools-boot -y
+sudo nano /etc/multipath.conf
+defaults {
+        user_friendly_names yes
+}
+```
+https://ubuntu.com/server/docs/device-mapper-multipathing-introduction  
+
+```sh
+systemctl stop multipath-tools.service
+multipath -F
+systemctl start multipath-tools.service
+mkdir /kist && cd /kist
+fdisk -l
+```
+Create a Linux partition larger than 2TB using parted:
+```sh
+parted /dev/mapper/mpatha
+(parted) unit TB
+(parted) mkpart primary 0 0
+(parted) rm
+Partition number? 1
+(parted) mkpart primary 0.00TB 10.00TB
+(parted) print
+(parted) quit
+mkfs.ext4 /dev/mapper/mpatha-part1
+mount /dev/mapper/mpatha-part1 /kist
+df -Th # disk check
+blkid  # UUID check
+```
+Copy /dev/mapper/mpatha-part1 UUID for auto mount:  
+```sh
+sudo nano /etc/fstab
+UUID=dde9*       /kist   ext4    defaults,auto,_netdev   0       0
+```
 
 링크 참고:  
 https://www.server-world.info/en/note?os=Ubuntu_18.04&p=iscsi&f=3  
@@ -145,32 +173,6 @@ sudo apt-get install boot-repair -y
 ```
 click Recommended Repair.
 
-## Multipath && Auto mount
 
-
-```sh
-sudo apt-get install multipath-tools multipath-tools-boot -y
-sudo nano /etc/multipath.conf
-defaults {
-        user_friendly_names yes
-}
-```
-https://ubuntu.com/server/docs/device-mapper-multipathing-introduction
-
-```sh
-systemctl stop multipath-tools.service
-multipath -F
-systemctl start multipath-tools.service
-mkdir /kist && cd /kist
-fdisk -l
-mount /dev/mapper/mpatha-part1 /kist
-df -Th # disk check
-blkid  # UUID check
-```
-Copy /dev/mapper/mpatha-part1 UUID for auto mount:
-```sh
-sudo nano /etc/fstab
-UUID=dde9*       /kist   ext4    defaults,auto,_netdev   0       0
-```
 
 
