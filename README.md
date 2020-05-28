@@ -109,7 +109,7 @@ df -Th
 ```
 
 ## Multipath && Auto mount
-
+Since the storage is configured with dual controllers, multipath operation is essential because the volume is assigned to the server in two Path:
 ```sh
 sudo apt-get install multipath-tools multipath-tools-boot -y
 sudo nano /etc/multipath.conf
@@ -117,8 +117,7 @@ defaults {
         user_friendly_names yes
 }
 ```
-https://ubuntu.com/server/docs/device-mapper-multipathing-introduction  
-
+Systemctl reboot for multipath:
 ```sh
 systemctl stop multipath-tools.service
 multipath -F
@@ -126,7 +125,7 @@ systemctl start multipath-tools.service
 mkdir /kist && cd /kist
 fdisk -l
 ```
-Create a Linux partition larger than 2TB using parted:
+Create a Linux partition larger than 2TB:
 ```sh
 parted /dev/mapper/mpatha
 (parted) unit TB
@@ -147,8 +146,10 @@ sudo nano /etc/fstab
 UUID=dde9*       /kist   ext4    defaults,auto,_netdev   0       0
 ```
 
-링크 참고:  
+*링크 참고:  
 https://www.server-world.info/en/note?os=Ubuntu_18.04&p=iscsi&f=3  
+https://ubuntu.com/server/docs/device-mapper-multipathing-introduction  
+
 
 ### Error solution
 
