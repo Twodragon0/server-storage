@@ -132,6 +132,7 @@ parted /dev/mapper/mpatha
 (parted) mkpart primary 0 0
 (parted) rm
 Partition number? 1
+(parted) mklabel gpt
 (parted) mkpart primary 0.00TB 10.00TB
 (parted) print
 (parted) quit
@@ -172,8 +173,4 @@ sudo add-apt-repository ppa:yannubuntu/boot-repair
 sudo apt-get update -y
 sudo apt-get install boot-repair -y
 ```
-click Recommended Repair.
-
-
-
-
+click Recommended Repair
