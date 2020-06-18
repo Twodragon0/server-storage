@@ -12,7 +12,7 @@ sudo nano /etc/iscsi/initiatorname.iscsi
 change to the same IQN you set on the iSCSI target server:  
 InitiatorName=iqn.2020-05.kr.re.kist.imrc:55  
 
-서버의 iqn확인:
+Check the server's iqn:
 ```sh
 sudo nano /etc/iscsi/iscsid.conf
 ```
@@ -22,8 +22,8 @@ sudo nano /etc/iscsi/iscsid.conf
 node.session.auth.username = iqn.2020-05.kr.re.kist.imrc:55  
 node.session.auth.password = 1111!@  
 
-username = 스토리지 initiator 계정  
-password = 임의 설정 (이 후 스토리지에서 host initiator 구성 시 CHAP 인증 password와 동일 하게 설정)  
+username = Storage initiator account
+password = Arbitrary setting (then, the same as the CHAP authentication password when configuring the host initiator in storage)
 
 ### discover target
 ```sh
@@ -31,12 +31,13 @@ iscsiadm -m discovery -t sendtargets -p 161.*.*.*
 ```
 - 161.*.*.*:3260,6 iqn.1988-11.com.dell:01.array.bc305bf0890  
 - 161.*.*.*:3260,5 iqn.1988-11.com.dell:01.array.bc305bf0890  
-- 161.*.*.*은 스토리지 IP
+- 161.*.*.* is Storage IP
 ```sh
 systemctl restart iscsid open-iscsi
 ```
-iscsid & open-iscsi 둘다 동작중이어야 합니다. 
-확인 방법:
+Both iscsid & open-iscsi must be running.
+
+checking way:
 ```sh
 systemctl status iscsid
 systemctl status open-iscsi
@@ -70,16 +71,15 @@ Logging in to [iface: default, target: iqn.1988-11.com.dell:01.array.bc305bf0890
 Login to [iface: default, target: iqn.1988-11.com.dell:01.array.bc305bf0890, portal: 161.*.*.*,3260] successful.  
 Login to [iface: default, target: iqn.1988-11.com.dell:01.array.bc305bf0890, portal: 161.*.*.*,3260] successful.  
 
-상단에 설명 한 것처럼 스토리지에서 host initiator 구성 시 CHAP 인증 정보와 서버의 CHAP 정보가 일치해야 함.  
-여기까지 진행 하면 스토리지에서 서버 iqn이 자동 등록되며, 스토리지에서 서버 생성 및 볼륨 할당을 진행함  
+As described above, when configuring a host initiator in storage, the CHAP authentication information and the server's CHAP information must match. Proceeding to this point, server iqn is automatically registered in storage, and server creation and volume allocation are performed in storage.  
 
 ### confirm the established session
 ```sh
 iscsiadm -m session -o show
 ```
  tcp: [1] 161.*.*.*:3260,1 iqn.2020-05.kr.re.kist.imrc:55 (non-flash)  
-스토리지에서 연결된 정보 확인 – 일반적으로 2개임 (듀얼컨트롤러)  
- 
+Checking connected information in storage – usually 2 (dual controller)
+
 ### confirm the partitions
 ```sh
 sudo cat /proc/partitions
@@ -100,8 +100,7 @@ major minor  #blocks  name
 fdisk -l
 ```
 Brand	Model	Version  
-- 새로운 파티션 안보임.  
-- 로그 아웃 후 재 로그인시 추가된 스토리지 볼륨이 정상적으로 확인됨  
+- If you do not see the new partition, the added storage volume is checked normally when you logout and login again.
 
 ```sh
 iscsiadm -m node --logout
@@ -147,7 +146,7 @@ sudo nano /etc/fstab
 UUID=dde9*       /kist   ext4    defaults,auto,_netdev   0       0
 ```
 
-*링크 참고:  
+*Link Note:
 https://www.server-world.info/en/note?os=Ubuntu_18.04&p=iscsi&f=3  
 https://ubuntu.com/server/docs/device-mapper-multipathing-introduction  
 
