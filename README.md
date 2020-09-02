@@ -160,7 +160,7 @@ https://ubuntu.com/server/docs/device-mapper-multipathing-introduction
 5. Disk write Authenrization allow 
 6. Modify or making #, and then reboot
 ```sh
-mount -o remount,rw /
+sudo mount -o remount,rw /
 sudo nano /etc/fstab
 sudo reboot
 ```
